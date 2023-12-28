@@ -49,10 +49,11 @@ class HashTable:
                 return True
 
     # Prints the key/value pair
-    def print(self):
+    def __str__(self):
         for pair in self.table:
             if pair is not None:
                 print(str(pair))
+        return ''
 
 
 
