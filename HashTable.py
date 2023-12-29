@@ -1,6 +1,6 @@
 class HashTable:
     def __init__(self):
-        self.size = 64
+        self.size = 25
         self.table = [None] * self.size
 
     # Calculates a hash value for the key
@@ -54,9 +54,6 @@ class HashTable:
             if pair is not None:
                 print(str(pair))
         return ''
-
-
-
 
 
 # Citing source: I used this video from the WGU C950 course tips as a guide: https://www.youtube.com/watch?v=9HFbhPscPU0
