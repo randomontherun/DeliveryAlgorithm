@@ -1,20 +1,22 @@
 import csv
+
+from HashTable import HashTable
 from Package import Package
 
 # Read distances and addresses from CSV files
 with open("CSV/Distance.csv") as distance:
-    Distance = csv.reader(distance)
-    Distance = list(Distance)
+    DistanceCSV = csv.reader(distance)
+    DistanceCSV = list(DistanceCSV)
 
 with open("CSV/Addresses.csv") as address:
-    Addresses = csv.reader(address)
-    Addresses = list(Addresses)
+    AddressesCSV = csv.reader(address)
+    AddressesCSV = list(AddressesCSV)
 
 
 # Function for loading package data into hash table. Used code from official WGU webinars
 # as guidance (W-3_ChainingHashTable_zyBooks_Key-Value_CSV_Greedy_Dijkstra.py)
-def load_package_data(fileName, hash_table):
-    with open(fileName) as packages:
+def load_package_data(file_name, hash_table):
+    with open(file_name) as packages:
         package_data = csv.reader(packages)
         for package in package_data:
             ID = int(package[0])
@@ -26,10 +28,17 @@ def load_package_data(fileName, hash_table):
             weight = package[6]
             status = "At the hub"
 
-            # Create package object for use in hash table
+            # Package object for use in hash table
             p = Package(ID, address, city, state, zip_code, departure_time, weight, status)
 
             # Insert package data in hash table with ID as the key
             hash_table.add(ID, p)
+
+
+# Hash table to hold package data
+hash_table = HashTable()
+
+# Extract package data
+load_package_data("CSV/Packages.csv", hash_table)
 
 
