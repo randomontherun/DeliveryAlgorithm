@@ -1,8 +1,3 @@
-import csv
-
-from HashTable import HashTable
-
-
 class Package:
 
     def __init__(self, ID, address, city, state, zip_code, deadline, weight, status):
