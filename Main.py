@@ -55,18 +55,7 @@ def distance_between(address1, address2):
         distance = distance_data[a2][a1]
     return float(distance)
 
-# Instantiate truck objects with packages manually loaded according to restraints
-truck_1 = Truck([1, 13, 14, 15, 16, 20, 29, 30, 31, 34, 37, 40], 0.0,
-                "4001 South 700 E", datetime.timedelta(hours=8))
-
-# Truck 2 leaves at 10:20 to account for mislabeled package 9
-truck_2 = Truck([2, 4, 5, 6, 7, 8, 9, 10, 11, 25, 28, 32, 33], 0.0,
-                "4001 South 700 E", datetime.timedelta(hours=10, minutes=20))
-
-truck_3 = Truck([3, 6, 12, 17, 18, 19, 21, 22, 23, 24, 26, 27, 35, 36, 38, 39], 0.0,
-                "4001 South 700 E", datetime.timedelta(hours=9, minutes=5))
-
-# Returns the address of the package nearest to the truck's current location
+# Returns the package nearest to the truck's current location
 def min_distance_from(truck):
     # Initialize variables to track the minimum distance and corresponding package
     min_distance = float('inf')
@@ -81,17 +70,19 @@ def min_distance_from(truck):
         # Update minimum distance and corresponding package if a shorter distance is found
         if distance < min_distance:
             min_distance = distance
-            closest_package = package.address
+            closest_package = package
 
     return closest_package
 
 # Function for delivering all the packages on the truck
 def deliver_packages(truck):
-    undelivered_packages = [packages_table.find(package_id) for package_id in truck.packages]
 
-    while any(package.status != 'Delivered' for package in undelivered_packages):
+    while len(truck.packages) > 0:
         # Find the closest undelivered package
-        closest_package = min(undelivered_packages, key=lambda p: distance_between(truck.address, p.address))
+        closest_package = min_distance_from(truck)
+
+        # Set departure time of package
+        closest_package.depart_time = truck.depart_time
 
         # Update total mileage
         distance = distance_between(truck.address, closest_package.address)
@@ -103,17 +94,51 @@ def deliver_packages(truck):
         # Update time for truck at delivery
         truck.time += datetime.timedelta(hours=distance / 18)
 
-        # Update status to "Delivered" and time delivered
-        closest_package.status = 'Delivered'
+        # Update time delivered
         closest_package.time_delivered = truck.time
 
-        # Update the undelivered packages list
-        undelivered_packages = [package for package in undelivered_packages if package.status != 'Delivered']
+        # Remove package from truck
+        truck.packages.remove(closest_package.ID)
 
-# deliver_packages(truck_1)
-#
-# for package_id in truck_1.packages:
-#     package = packages_table.find(package_id)
-#     print(package.status, package.time_delivered)
-#
-# print(truck_1.mileage)
+    # Return the truck to the hub
+    distance = distance_between(truck.address, '4001 South 700 E')
+    # Update final mileage and time for the truck
+    truck.mileage += distance
+    truck.time += datetime.timedelta(hours=distance / 18)
+
+# Instantiate truck objects with packages manually loaded according to restraints
+truck_1 = Truck([13, 14, 15, 16, 19, 20, 27, 29, 30, 31, 34, 35, 39, 40], 0.0,
+                "4001 South 700 E", datetime.timedelta(hours=8))
+
+truck_2 = Truck([1, 3, 6, 12, 18, 21, 22, 23, 24, 25, 26, 28, 36, 37, 38], 0.0,
+                "4001 South 700 E", datetime.timedelta(hours=9, minutes=5))
+
+truck_3 = Truck([2, 4, 5, 7, 8, 9, 10, 11, 17, 32, 33], 0.0,
+                "4001 South 700 E", datetime.timedelta(hours=10, minutes=20))
+
+print('Number of packages:')
+print(len(truck_1.packages) + len(truck_2.packages) + len(truck_3.packages))
+print('Packages in order:')
+all_trucks = truck_1.packages + truck_2.packages + truck_3.packages
+all_trucks.sort()
+print(all_trucks)
+
+# Send out the trucks
+deliver_packages(truck_1)
+deliver_packages(truck_2)
+deliver_packages(truck_3)
+
+
+print('Truck 1 mileage:')
+print(truck_1.mileage)
+print('Truck 2 mileage:')
+print(truck_2.mileage)
+print('Truck 3 mileage:')
+print(truck_3.mileage)
+print('Total mileage:')
+print(truck_1.mileage + truck_2.mileage + truck_3.mileage)
+print('Truck 1 finish time:')
+print(truck_1.time)
+print('Info for package ' + str(packages_table.find(1)))
+
+

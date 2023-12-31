@@ -9,11 +9,12 @@ class Package:
         self.deadline = deadline
         self.weight = weight
         self.status = status
+        self.depart_time = None
         self.time_delivered = None
 
     def __str__(self):
-        return "%s, %s, %s, %s, %s, %s, %s, %s" % (
-        self.ID, self.address, self.city, self.state, self.zip_code, self.deadline, self.weight, self.status)
+        return "%s, %s, %s, %s, %s, %s, %s, %s, %s, %s" % (
+        self.ID, self.address, self.city, self.state, self.zip_code, self.deadline, self.weight, self.status, self.depart_time, self.time_delivered)
 
     def update_status(self, convert_timedelta):
         if self.delivery_time < convert_timedelta:
