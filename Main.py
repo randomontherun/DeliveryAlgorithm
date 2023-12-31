@@ -55,7 +55,7 @@ def distance_between(address1, address2):
         distance = distance_data[a2][a1]
     return float(distance)
 
-# Instantiate truck objects with packages manually loaded according to restraints in part F
+# Instantiate truck objects with packages manually loaded according to restraints
 truck_1 = Truck([1, 13, 14, 15, 16, 20, 29, 30, 31, 34, 37, 40], 0.0,
                 "4001 South 700 E", datetime.timedelta(hours=8))
 
@@ -85,3 +85,35 @@ def min_distance_from(truck):
 
     return closest_package
 
+# Function for delivering all the packages on the truck
+def deliver_packages(truck):
+    undelivered_packages = [packages_table.find(package_id) for package_id in truck.packages]
+
+    while any(package.status != 'Delivered' for package in undelivered_packages):
+        # Find the closest undelivered package
+        closest_package = min(undelivered_packages, key=lambda p: distance_between(truck.address, p.address))
+
+        # Update total mileage
+        distance = distance_between(truck.address, closest_package.address)
+        truck.mileage += distance
+
+        # Update current address
+        truck.address = closest_package.address
+
+        # Update time for truck at delivery
+        truck.time += datetime.timedelta(hours=distance / 18)
+
+        # Update status to "Delivered" and time delivered
+        closest_package.status = 'Delivered'
+        closest_package.time_delivered = truck.time
+
+        # Update the undelivered packages list
+        undelivered_packages = [package for package in undelivered_packages if package.status != 'Delivered']
+
+# deliver_packages(truck_1)
+#
+# for package_id in truck_1.packages:
+#     package = packages_table.find(package_id)
+#     print(package.status, package.time_delivered)
+#
+# print(truck_1.mileage)
