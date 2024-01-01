@@ -119,6 +119,7 @@ truck_1 = Truck('Truck 1', [1, 13, 14, 15, 16, 19, 20, 27, 29, 30, 31, 34, 35, 3
 truck_2 = Truck('Truck 2', [3, 6, 12, 18, 21, 22, 23, 24, 25, 26, 28, 36, 38], 0.0,
                 "4001 South 700 E", datetime.timedelta(hours=9, minutes=5))
 
+# Truck 3 leaves at 10:20 to account for wrong address on package 9
 truck_3 = Truck('Truck 3', [2, 4, 5, 7, 8, 9, 10, 11, 17, 32, 33], 0.0,
                 "4001 South 700 E", datetime.timedelta(hours=10, minutes=20))
 
@@ -147,10 +148,10 @@ class Main:
     time_lookup = datetime.timedelta(hours=int(hour), minutes=int(minute))
 
     # Determine whether the user wants to view one or all delivery statuses
-    user_input = input("\nPlease enter 'one' to view a single package or 'all' to view all the packages: ")
+    user_input = input("Please enter 'one' to view a single package or 'all' to view all the packages: ")
 
     if user_input == 'one':
-        user_package = input('\nPlease enter the Package ID number: ')
+        user_package = input('Please enter the Package ID number: ')
 
         package = packages_table.lookup(int(user_package))
         package.status_at_time(time_lookup)
