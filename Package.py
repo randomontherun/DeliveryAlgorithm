@@ -11,15 +11,16 @@ class Package:
         self.status = status
         self.depart_time = None
         self.time_delivered = None
+        self.on_truck = None
 
     def __str__(self):
-        return "%s, %s, %s, %s, %s, %s, %s, %s, %s, %s" % (
-        self.ID, self.address, self.city, self.state, self.zip_code, self.deadline, self.weight, self.status, self.depart_time, self.time_delivered)
+        return "%s, %s, %s, %s, %s, %s" % (
+        self.address, self.deadline, self.city, self.zip_code, self.weight + ' kilos', self.status)
 
-    def update_status(self, convert_timedelta):
-        if self.delivery_time < convert_timedelta:
-            self.status = "Delivered"
-        elif self.departure_time > convert_timedelta:
-            self.status = "En route"
+    def status_at_time(self, time_lookup):
+        if self.time_delivered <= time_lookup:
+            self.status = "Delivered at " + str(self.time_delivered)
+        elif self.depart_time < time_lookup:
+            self.status = "En route on " + str(self.on_truck)
         else:
             self.status = "At Hub"

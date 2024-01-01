@@ -30,7 +30,7 @@ class HashTable:
             return True
 
     # Finds a value in the table
-    def find(self, key):
+    def lookup(self, key):
         hashKey = self.hash(key)
         if self.table[hashKey] is not None:
             for pair in self.table[hashKey]:

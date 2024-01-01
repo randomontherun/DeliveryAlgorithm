@@ -1,3 +1,6 @@
+# Student ID: 011770050
+# Student name: Richard Bueno
+
 import csv
 import sys
 from HashTable import HashTable
@@ -62,7 +65,7 @@ def min_distance_from(truck):
     closest_package = None
 
     for package_id in truck.packages:
-        package = packages_table.find(package_id)  # Retrieve the package from the hash table
+        package = packages_table.lookup(package_id)  # Retrieve the package from the hash table
 
         # Calculate the distance between the truck and the package's destination address
         distance = distance_between(truck.address, package.address)
@@ -80,6 +83,9 @@ def deliver_packages(truck):
     while len(truck.packages) > 0:
         # Find the closest undelivered package
         closest_package = min_distance_from(truck)
+
+        # Specify the truck the package is on
+        closest_package.on_truck = truck.name
 
         # Set departure time of package
         closest_package.depart_time = truck.depart_time
@@ -107,38 +113,58 @@ def deliver_packages(truck):
     truck.time += datetime.timedelta(hours=distance / 18)
 
 # Instantiate truck objects with packages manually loaded according to restraints
-truck_1 = Truck([13, 14, 15, 16, 19, 20, 27, 29, 30, 31, 34, 35, 39, 40], 0.0,
+truck_1 = Truck('Truck 1', [1, 13, 14, 15, 16, 19, 20, 27, 29, 30, 31, 34, 35, 37, 39, 40], 0.0,
                 "4001 South 700 E", datetime.timedelta(hours=8))
 
-truck_2 = Truck([1, 3, 6, 12, 18, 21, 22, 23, 24, 25, 26, 28, 36, 37, 38], 0.0,
+truck_2 = Truck('Truck 2', [3, 6, 12, 18, 21, 22, 23, 24, 25, 26, 28, 36, 38], 0.0,
                 "4001 South 700 E", datetime.timedelta(hours=9, minutes=5))
 
-truck_3 = Truck([2, 4, 5, 7, 8, 9, 10, 11, 17, 32, 33], 0.0,
+truck_3 = Truck('Truck 3', [2, 4, 5, 7, 8, 9, 10, 11, 17, 32, 33], 0.0,
                 "4001 South 700 E", datetime.timedelta(hours=10, minutes=20))
-
-print('Number of packages:')
-print(len(truck_1.packages) + len(truck_2.packages) + len(truck_3.packages))
-print('Packages in order:')
-all_trucks = truck_1.packages + truck_2.packages + truck_3.packages
-all_trucks.sort()
-print(all_trucks)
 
 # Send out the trucks
 deliver_packages(truck_1)
 deliver_packages(truck_2)
 deliver_packages(truck_3)
 
+class Main:
+    # User interface
+    print('WGUPS Package Status Interface\n')
 
-print('Truck 1 mileage:')
-print(truck_1.mileage)
-print('Truck 2 mileage:')
-print(truck_2.mileage)
-print('Truck 3 mileage:')
-print(truck_3.mileage)
-print('Total mileage:')
-print(truck_1.mileage + truck_2.mileage + truck_3.mileage)
-print('Truck 1 finish time:')
-print(truck_1.time)
-print('Info for package ' + str(packages_table.find(1)))
+    # Mileage report
+    print('The first driver departed with the first truck at ' + str(truck_1.depart_time) +
+          ' and returned at ' + str(truck_1.time))
+    print('The second driver departed with the second truck at ' + str(truck_2.depart_time) +
+          ' and returned at ' + str(truck_2.time))
+    print('The first driver departed with the third truck at ' + str(truck_3.depart_time) +
+          ' and returned at ' + str(truck_3.time) + '\n')
 
+    print('Total mileage: ' + str(truck_1.mileage + truck_2.mileage + truck_3.mileage) + '\n')
 
+    # Get the time for use in delivery status
+    time_input = input('Please enter the time at which you wish to view the packages. Use the HH:MM format: ')
+    (hour, minute) = time_input.split(':')
+    time_lookup = datetime.timedelta(hours=int(hour), minutes=int(minute))
+
+    # Determine whether the user wants to view one or all delivery statuses
+    user_input = input("\nPlease enter 'one' to view a single package or 'all' to view all the packages: ")
+
+    if user_input == 'one':
+        user_package = input('\nPlease enter the Package ID number: ')
+
+        package = packages_table.lookup(int(user_package))
+        package.status_at_time(time_lookup)
+        print('Package ' + str(package.ID) + ' status: ' + str(package.status))
+
+    elif user_input == 'all':
+        for package_id in range(1, 41):
+            package = packages_table.lookup(package_id)
+            package.status_at_time(time_lookup)
+            print('Package ' + str(package.ID) + ' status: ' + str(package.status))
+
+    # Demonstration of the lookup funtion for part B of the assignment
+    user_input2 = input("\nTo demonstrate the lookup function, please enter 'lookup': ")
+    if user_input2 == 'lookup':
+        lookup_input = input('Please enter the ID number of the package you would like to look up: ')
+        package = packages_table.lookup(int(lookup_input))
+        print(package)

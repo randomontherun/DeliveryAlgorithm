@@ -1,6 +1,7 @@
 class Truck:
 
-    def __init__(self, packages, mileage, address, depart_time):
+    def __init__(self, name, packages, mileage, address, depart_time):
+        self.name = name
         self.packages = packages
         self.mileage = mileage
         self.address = address
