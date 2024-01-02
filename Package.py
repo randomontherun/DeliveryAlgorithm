@@ -23,4 +23,4 @@ class Package:
         elif self.depart_time < time_lookup:
             self.status = "En route on " + str(self.on_truck)
         else:
-            self.status = "At Hub"
+            self.status = "At Hub on " + str(self.on_truck)
